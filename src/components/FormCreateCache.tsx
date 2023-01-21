@@ -9,19 +9,17 @@ import {
     Stack,
 } from "@chakra-ui/react";
 import React, {useState} from "react";
-import {GeocacheType, GeocacheCoordinates} from "../api/types";
+import {GeocacheType, GeocacheCoordinates, GeocacheRequest} from "../api/types";
 import MapInput from "./MapInput";
 import {checkPassword, createCache} from "../api";
 
 
 function FormCreateCache() {
     const [type, setType] = useState<GeocacheType>("mystery");
-    const [title, setTitle] = useState<string>()
-    const [content, setContent] = useState<string>()
-    const found = false;
-    const locked = true;
-    const [coordinates, setCoordinates] = useState<GeocacheCoordinates>();
-    const [fakeCoordinates, setFakeCoordinates] = useState<GeocacheCoordinates>();
+    const [title, setTitle] = useState<string>("")
+    const [content, setContent] = useState<string>("")
+    const [coordinates, setCoordinates] = useState<GeocacheCoordinates>({lat: 0, lng: 0});
+    const [fakeCoordinates, setFakeCoordinates] = useState<GeocacheCoordinates>({lat: 0, lng: 0});
     const [question, setQuestion] = useState<string>();
     const [solution, setSolution] = useState<string>();
 
@@ -34,16 +32,38 @@ function FormCreateCache() {
 
         checkPassword(password)
             .then(isCorrect => {
-                if (isCorrect) {
-                    alert("spravne heslo")
-                }
-                else{
+                if (!isCorrect) {
                     alert("Nespravne heslo")
-                    return
+                    return;
                 }
             })
 
-        //... createCache()
+        let request: GeocacheRequest;
+
+        if (isMystery) {
+            request = {
+                type: "mystery",
+                title: title,
+                content: content,
+                latitude: coordinates.lat,
+                longitude: coordinates.lng,
+                fakeLatitude: fakeCoordinates.lat,
+                fakeLongitude: fakeCoordinates.lng,
+                question: question,
+                solution: solution
+            }
+        } else {
+            request = {
+                type: "traditional",
+                title: title,
+                content: content,
+                latitude: coordinates.lat,
+                longitude: coordinates.lng,
+            }
+        }
+
+        createCache(password, request);
+
     }
 
 
@@ -116,6 +136,7 @@ function FormCreateCache() {
             <Button
                 onClick={() => submit()}
             >Vytvorit</Button>
+
         </Stack>
     )
 }

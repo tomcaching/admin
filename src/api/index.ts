@@ -1,6 +1,6 @@
 import { GeocacheDto, GeocacheRequest } from "./types";
 
-const api = "C";
+const api = "https://api.tomcaching.fun/api";
 
 const authentication = (password: string): { "Authorization": string } => {
     const credentials = `admin:${password}`;
