@@ -1,6 +1,6 @@
 import { GeocacheDto, GeocacheRequest } from "./types";
 
-const api = "https://api.tomcaching.fun/api";
+const api = "C";
 
 const authentication = (password: string): { "Authorization": string } => {
     const credentials = `admin:${password}`;
@@ -55,7 +55,7 @@ export const fetchCaches = async (password: string): ApiResponse => {
  * @param request Geocache data
  */
 export const createCache = async (password: string, request: GeocacheRequest): ApiResponse => {
-    return await fetch(`${api}/caches/`, {
+    return await fetch(`${api}/caches/create`, {
         method: "post",
         headers: json(authentication(password)),
         body: JSON.stringify(request)
