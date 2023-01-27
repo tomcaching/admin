@@ -5,10 +5,25 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 const client = new QueryClient();
 
+// TODO: Use loop to generate this?
+const expandColor = (value: string) => {
+  return {
+    100: value,
+    200: value,
+    300: value,
+    400: value,
+    500: value,
+    600: value,
+    700: value,
+    800: value,
+    900: value,
+  }
+}
+
 const theme = extendTheme({
   colors: {
     geocaching: {
-      green: "#02874d",
+      green: expandColor("#02874d"),
       white: "#ffffff",
       light: "#e6f7ef",
       gray: {
@@ -24,11 +39,8 @@ const theme = extendTheme({
   },
   components: {
     Button: {
-      variants: {
-        geocaching: {
-          bg: "geocaching.green",
-          color: "geocaching.white"
-        }
+      defaultProps: {
+        colorScheme: "geocaching.green"
       }
     }
   }
