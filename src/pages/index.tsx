@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { PasswordPrompt } from '@/components/PasswordPrompt'
 import Head from 'next/head'
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <Button variant="geocaching">Button</Button>
+      <PasswordPrompt/>
     </>
   )
 }
