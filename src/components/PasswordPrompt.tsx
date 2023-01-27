@@ -1,3 +1,4 @@
+import { useAdminContext } from "@/context";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { useState, type FC } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -6,8 +7,10 @@ export const PasswordPrompt: FC = () => {
     const [visible, setVisible] = useState<boolean>(false);
     const [input, setInput] = useState<string>("");
 
+    const { setPassword } = useAdminContext();
+
     const onSubmit = (password: string) => {
-        window.alert("Submitting: " + password);
+        setPassword(password);
     };
 
     return (

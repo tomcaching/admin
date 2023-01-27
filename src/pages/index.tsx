@@ -1,9 +1,14 @@
 import { PasswordPrompt } from '@/components/PasswordPrompt'
+import { AdminContext } from '@/context'
 import Head from 'next/head'
+import { useState } from 'react'
+
 
 export default function Home() {
+  const [password, setPassword] = useState<string | null>(null);
+
   return (
-    <>
+    <AdminContext.Provider value={{ password, setPassword }}>
       <Head>
         <title>Tomcaching admin</title>
         <meta name="description" content="Administrace kešek pro Tomcaching" />
@@ -11,7 +16,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <PasswordPrompt/>
-    </>
+      {
+        password === null 
+        ? <PasswordPrompt/>
+        : <div>Logged in</div>
+      }
+      
+    </AdminContext.Provider>
   )
 }
