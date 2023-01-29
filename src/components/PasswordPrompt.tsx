@@ -1,5 +1,6 @@
+import { checkPassword } from "@/client";
 import { useAdminContext } from "@/context";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Button, Input, InputGroup, InputRightElement, Alert, AlertIcon } from "@chakra-ui/react";
 import { useState, type FC } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -7,12 +8,23 @@ export const PasswordPrompt: FC = () => {
     const [visible, setVisible] = useState<boolean>(false);
     const [input, setInput] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
 
     const { setPassword } = useAdminContext();
 
-    const onSubmit = (password: string) => {
+    const onSubmit = async (password: string) => {
         setLoading(true);
-        // setPassword(password);
+        setError(false);
+
+        const valid = await checkPassword(password);
+
+        if (!valid) {
+            setError(true);
+            setLoading(false);
+            return;
+        }
+
+        setPassword(password);
     };
 
     return (
@@ -22,6 +34,12 @@ export const PasswordPrompt: FC = () => {
                 <ModalContent p="5">
                     <ModalHeader>Heslo</ModalHeader>
                     <ModalBody>
+                        {error && (
+                            <Alert status="error" marginBottom={2} variant="left-accent">
+                                <AlertIcon/>
+                                Nesprávné heslo
+                            </Alert>
+                        )}
                         <InputGroup size='md'>
                             <Input type={visible ? "text" : "password"} value={input} focusBorderColor="geocaching.green.500" fontFamily="mono" onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && onSubmit(input)} />
                             <InputRightElement>
