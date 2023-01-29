@@ -5,6 +5,12 @@ import { useState, type FC } from "react";
 import { useQuery } from "react-query";
 import { CachesList } from "./CachesList";
 
+const LoadingScreen: FC = () => {
+    return (
+        <></>
+    )
+}
+
 const CachesEditor: FC = () => {
     const { password } = useAdminContext();
     const { data: caches, isLoading: cachesLoading } = useQuery<Array<GeocacheDto>>("caches", async () => await fetchCaches(password!));
@@ -14,9 +20,11 @@ const CachesEditor: FC = () => {
         <>
             {
                 cachesLoading
-                    ? <div>Loading...</div>
+                    ? <LoadingScreen />
                     : (
-                        <CachesList caches={caches!} onSelect={(id) => setSelectedCache(id)} />
+                        <div>
+                            <CachesList caches={caches!} selectedCache={selectedCache} onSelect={(id) => setSelectedCache(id)} />
+                        </div>
                     )
             }
         </>

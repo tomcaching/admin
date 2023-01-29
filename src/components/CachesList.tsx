@@ -3,17 +3,20 @@ import { FC } from "react";
 
 type CachesListProps = {
     caches: Array<GeocacheDto>;
+    selectedCache: number | null;
     onSelect: (id: number) => void;
 };
 
-export const CachesList: FC<CachesListProps> = ({ caches, onSelect }: CachesListProps) => {
+export const CachesList: FC<CachesListProps> = ({ caches, selectedCache, onSelect }: CachesListProps) => {
     return (
-        <ul>
+        <div>
             {
-                caches.map((cache) => 
-                    <li onClick={() => onSelect(cache.id)} key={cache.id}>{cache.title}</li>
+                caches.map((cache) =>
+                    <div key={cache.id} onClick={() => onSelect(cache.id)}>
+                        {cache.title}
+                    </div>
                 )
             }
-        </ul>
+        </div>
     )
 };
