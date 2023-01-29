@@ -1,12 +1,13 @@
+import CachesEditor from '@/components/CachesEditor';
 import { PasswordPrompt } from '@/components/PasswordPrompt'
 import { AdminContext } from '@/context'
+import { GeocacheDto } from '@/types';
 import Head from 'next/head'
 import { useState } from 'react'
 
 
 export default function Home() {
   const [password, setPassword] = useState<string | null>(null);
-
   return (
     <AdminContext.Provider value={{ password, setPassword }}>
       <Head>
@@ -17,11 +18,11 @@ export default function Home() {
       </Head>
 
       {
-        password === null 
-        ? <PasswordPrompt/>
-        : <div>Logged in</div>
+        password === null
+          ? <PasswordPrompt />
+          : <CachesEditor />
       }
-      
+
     </AdminContext.Provider>
   )
 }

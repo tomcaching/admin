@@ -1,3 +1,4 @@
+import { GeocacheDto } from "@/types";
 import { createContext, useContext } from "react"
 
 export type AdminContextState = {
