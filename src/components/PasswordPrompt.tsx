@@ -41,14 +41,14 @@ export const PasswordPrompt: FC = () => {
                             </Alert>
                         )}
                         <InputGroup size='md'>
-                            <Input type={visible ? "text" : "password"} value={input} focusBorderColor="geocaching.green.500" fontFamily="mono" onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && onSubmit(input)} />
+                            <Input type={visible ? "text" : "password"} value={input} focusBorderColor="geocaching.green.500" fontFamily="mono" onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && onSubmit(input)} tabIndex={1}/>
                             <InputRightElement>
                                 <Button colorScheme="gray" px="2" size='sm' onClick={() => setVisible(current => !current)}>
                                     {visible ? <FaEyeSlash /> : <FaEye />}
                                 </Button>
                             </InputRightElement>
                         </InputGroup>
-                        <Button mt={3} onClick={() => onSubmit(input)} isLoading={loading}>
+                        <Button mt={3} onClick={() => onSubmit(input)} isLoading={loading} tabIndex={2}>
                             Pokračovat
                         </Button>
                     </ModalBody>
