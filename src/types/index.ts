@@ -9,6 +9,7 @@ type GeocacheDtoBase = {
     id: number;
     type: GeocacheType;
     title: string;
+    hint: string;
     content: string;
     found: boolean;
     coordinates: GeocacheCoordinates;
