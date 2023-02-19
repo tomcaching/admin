@@ -1,6 +1,8 @@
 import React, {FC, useState} from "react";
 import {Form, Button, Row, Col} from "react-bootstrap";
 import {GeocacheCoordinates, GeocacheDto, GeocacheRequest, GeocacheType} from "@/types";
+import {createCache, updateCache} from "@/client";
+import {useAdminContext} from "@/context";
 
 type CacheFormProps = {
     creatingNew: boolean;
@@ -13,14 +15,16 @@ const defaultCoords: GeocacheCoordinates = {
 }
 const CacheForm: FC<CacheFormProps> = ({creatingNew, cache}: CacheFormProps) => {
 
-    //nevim jak je udelany vytvareni id u novych kesek takze ten DTO bude mit -1
+    const { password } = useAdminContext();
+
     const id = creatingNew ? -1 : cache!.id;
 
     const [title, setTitle] = useState<string>(creatingNew ? "Nova Keska" : cache!.title);
     const [type, setType] = useState<GeocacheType>(creatingNew ? "traditional" : cache!.type);
     const [content, setContent] = useState<string>(creatingNew ? "" : cache!.content);
-    const [locked, setLocked] = useState(creatingNew ? true : cache!.locked)
-    const [found, setFound] = useState(creatingNew? false : cache!.found)
+    const [hint, setHint] = useState<string>(creatingNew?"": cache!.hint);
+    const [locked, setLocked] = useState(creatingNew ? true : cache!.locked);
+    const [found, setFound] = useState(creatingNew? false : cache!.found);
     const isMystery = type == "mystery";
 
     const [realLat, setRealLat] = useState((creatingNew ? defaultCoords.lat : cache!.coordinates.lat).toString())
@@ -51,8 +55,6 @@ const CacheForm: FC<CacheFormProps> = ({creatingNew, cache}: CacheFormProps) => 
                 lng: Number(fakeLng),
             }
 
-            // TODO
-            const hint = "Hint placeholder";
             const base = {
                 title,
                 content,
@@ -65,13 +67,15 @@ const CacheForm: FC<CacheFormProps> = ({creatingNew, cache}: CacheFormProps) => 
                 ? { ...base, type: "mystery", fakeLatitude: fakeCoordinates.lat, fakeLongitude: fakeCoordinates.lng, question, solution }
                 : { ...base, type: "traditional" };
 
-            console.log(request);
 
             if (creatingNew) {
-                //id je -1 protze nevim jak funguje generovani id
-                //novaKeska(cacheDto)
+                console.log("creating")
+                createCache(password!, request)
+                    .then(result => console.log(result))
             } else {
-                //aktualizovatKesku(cacheDto)
+                console.log("updating")
+                updateCache(password!, id, request)
+                    .then(result => console.log(result))
             }
         }}>
             <Form.Group className="mb-3">
@@ -124,6 +128,12 @@ const CacheForm: FC<CacheFormProps> = ({creatingNew, cache}: CacheFormProps) => 
                     </Row>
                 </Form.Group>
             }
+            <Form.Group className="mb-3">
+                <Form.Label>Napoveda</Form.Label>
+
+                <Form.Control type="text" placeholder="" value={hint}
+                              onChange={(event) => setHint(event.target.value)}/>
+            </Form.Group>
             {
                 isMystery &&
                 <Form.Group className="mb-3">
