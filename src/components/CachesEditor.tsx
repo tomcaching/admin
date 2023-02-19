@@ -14,13 +14,15 @@ const LoadingScreen: FC = () => {
 }
 
 const CachesEditor: FC = () => {
+    const NEW_CACHE_ID = -1;
     const { password } = useAdminContext();
     const {
         data: caches,
         isLoading: cachesLoading
     } = useQuery<Array<GeocacheDto>>("caches", async () => await fetchCaches(password!));
-    const [selectedCache, setSelectedCache] = useState<number | null>(null);
-    const isEditing = selectedCache != null;
+    const [selectedCacheId, setSelectedCacheId] = useState<number | null>(null);
+    const selectedCache = caches?.find(cache => cache.id == selectedCacheId )
+    const isEditing = selectedCacheId != null;
 
     return (
         <>
@@ -31,17 +33,17 @@ const CachesEditor: FC = () => {
 
                         isEditing
                             ? (
-                                selectedCache === -1 ?
+                                selectedCacheId === NEW_CACHE_ID ?
                                     <CacheForm creatingNew={true} />
                                     :
-                                    <CacheForm creatingNew={false} cache={caches!.at(selectedCache!)} />
+                                    <CacheForm creatingNew={false} cache={selectedCache} />
                             ) : (
                                 <div>
-                                    <CachesList caches={caches!} selectedCache={selectedCache}
-                                        onSelect={(id) => { setSelectedCache(id) }} />
+                                    <CachesList caches={caches!} selectedCache={selectedCacheId}
+                                        onSelect={(id) => { setSelectedCacheId(id) }} />
 
-                                    <Button onClick={event => {
-                                        setSelectedCache(-1);
+                                    <Button onClick={() => {
+                                        setSelectedCacheId(NEW_CACHE_ID);
                                     }}>Nova keska</Button>
                                 </div>
                             )
