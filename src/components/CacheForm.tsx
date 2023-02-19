@@ -1,6 +1,6 @@
 import React, {FC, useState} from "react";
 import {Form, Button, Row, Col} from "react-bootstrap";
-import {GeocacheCoordinates, GeocacheDto, GeocacheType} from "@/types";
+import {GeocacheCoordinates, GeocacheDto, GeocacheRequest, GeocacheType} from "@/types";
 
 type CacheFormProps = {
     creatingNew: boolean;
@@ -51,20 +51,22 @@ const CacheForm: FC<CacheFormProps> = ({creatingNew, cache}: CacheFormProps) => 
                 lng: Number(fakeLng),
             }
 
+            // TODO
+            const hint = "Hint placeholder";
+            const base = {
+                title,
+                content,
+                latitude: coordinates.lat,
+                longitude: coordinates.lng,
+                hint
+            };
 
-            const cacheDto: GeocacheDto = {
-                id: id,
-                type: type,
-                title: title,
-                content: content,
-                coordinates: coordinates,
-                found: found,
+            const request: GeocacheRequest = isMystery 
+                ? { ...base, type: "mystery", fakeLatitude: fakeCoordinates.lat, fakeLongitude: fakeCoordinates.lng, question, solution }
+                : { ...base, type: "traditional" };
 
-                fakeCoordinates: isMystery? fakeCoordinates : null,
-                question: isMystery? question: null,
-                solution: isMystery? solution: null,
-                locked: isMystery? locked : false,
-            }
+            console.log(request);
+
             if (creatingNew) {
                 //id je -1 protze nevim jak funguje generovani id
                 //novaKeska(cacheDto)
