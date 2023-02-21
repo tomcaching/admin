@@ -37,6 +37,7 @@ export type GeocacheRequest = {
     title: string;
     content: string;
     type: GeocacheType;
+    hint:string;
     latitude: number;
     longitude: number;
     fakeLatitude?: number;

@@ -1,11 +1,10 @@
-import { fetchCaches } from "@/client";
-import { useAdminContext } from "@/context";
-import { type GeocacheDto } from "@/types";
-import { useState, type FC } from "react";
-import { useQuery } from "react-query";
-import { CachesList } from "./CachesList";
-import CacheForm from "@/components/CacheForm";
-import { Button } from "react-bootstrap";
+import {deleteCache, fetchCaches, resetCache} from "@/client";
+import {useAdminContext} from "@/context";
+import {type GeocacheDto} from "@/types";
+import {type FC} from "react";
+import {useQuery} from "react-query";
+import Link from "next/link";
+import {Button} from "react-bootstrap";
 
 const LoadingScreen: FC = () => {
     return (
@@ -14,40 +13,55 @@ const LoadingScreen: FC = () => {
 }
 
 const CachesEditor: FC = () => {
-    const NEW_CACHE_ID = -1;
-    const { password } = useAdminContext();
+    const {password} = useAdminContext();
     const {
         data: caches,
         isLoading: cachesLoading
     } = useQuery<Array<GeocacheDto>>("caches", async () => await fetchCaches(password!));
-    const [selectedCacheId, setSelectedCacheId] = useState<number | null>(null);
-    const selectedCache = caches?.find(cache => cache.id == selectedCacheId )
-    const isEditing = selectedCacheId != null;
-
     return (
         <>
             {
                 cachesLoading
-                    ? <LoadingScreen />
-                    : (
+                    ? <LoadingScreen/>
+                    :
+                    <>
+                        <span className={"m-2"}>Pocet kesek: {caches!.length}</span>
+                        {
+                            caches!.map(
+                                (cache, index) =>
+                                    <div
+                                        key={index}
+                                    >
+                                        <Link
+                                            href={"/edit/" + cache.id}
+                                            className={"btn-outline-secondary btn m-2 w-25"}
+                                        >
 
-                        isEditing
-                            ? (
-                                selectedCacheId === NEW_CACHE_ID ?
-                                    <CacheForm creatingNew={true} />
-                                    :
-                                    <CacheForm creatingNew={false} cache={selectedCache} />
-                            ) : (
-                                <div>
-                                    <CachesList caches={caches!} selectedCache={selectedCacheId}
-                                        onSelect={(id) => { setSelectedCacheId(id) }} />
-
-                                    <Button onClick={() => {
-                                        setSelectedCacheId(NEW_CACHE_ID);
-                                    }}>Nova keska</Button>
-                                </div>
+                                            <div
+                                                className={"d-block m-2"}
+                                            >
+                                                {cache.title}
+                                            </div>
+                                        </Link>
+                                        <Button
+                                            variant={"secondary"}
+                                            onClick={() => resetCache(password!, cache.id)}
+                                        >Reset</Button>
+                                        <Button
+                                            variant={"danger"}
+                                            className={"m-1"}
+                                            onClick={() => {
+                                                if (confirm(cache.title+"\nbude smazana!")) deleteCache(password!,cache.id).then(response=>console.log("deleted",response));
+                                            }}
+                                        >X</Button>
+                                    </div>
                             )
-                    )
+                        }
+                        <Link
+                            href={"/edit/new"}
+                            className={"btn-primary btn d-block m-2 w-25"}
+                        >+</Link>
+                    </>
             }
         </>
     );
