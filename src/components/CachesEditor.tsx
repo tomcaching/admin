@@ -1,10 +1,11 @@
 import {deleteCache, fetchCaches, resetCache} from "@/client";
 import {useAdminContext} from "@/context";
 import {type GeocacheDto} from "@/types";
-import {type FC} from "react";
+import {type FC, useState} from "react";
 import {useQuery} from "react-query";
 import Link from "next/link";
 import {Button} from "react-bootstrap";
+import {localStoragePassword} from "@/components/PasswordPrompt";
 
 const LoadingScreen: FC = () => {
     return (
@@ -18,6 +19,9 @@ const CachesEditor: FC = () => {
         data: caches,
         isLoading: cachesLoading
     } = useQuery<Array<GeocacheDto>>("caches", async () => await fetchCaches(password!));
+
+    const [passwordInfo, setPasswordInfo] = useState(false)
+
     return (
         <>
             {
@@ -51,7 +55,7 @@ const CachesEditor: FC = () => {
                                             variant={"danger"}
                                             className={"m-1"}
                                             onClick={() => {
-                                                if (confirm(cache.title+"\nbude smazana!")) deleteCache(password!,cache.id).then(response=>console.log("deleted",response));
+                                                if (confirm(cache.title + "\nbude smazana!")) deleteCache(password!, cache.id).then(response => console.log("deleted", response));
                                             }}
                                         >X</Button>
                                     </div>
@@ -61,6 +65,19 @@ const CachesEditor: FC = () => {
                             href={"/edit/new"}
                             className={"btn-primary btn d-block m-2 w-25"}
                         >+</Link>
+                        <div>
+
+                            <Button title={"vymazat heslo z localStorage"} disabled={passwordInfo} className={"btn-sm"} variant={"secondary"} onClick={() => {
+                                localStorage.removeItem(localStoragePassword);
+                                setPasswordInfo(true)
+                            }}>
+                                {
+                                    passwordInfo
+                                        ? <>heslo bylo zapomenuto</>
+                                        : <>zapomenout heslo</>
+                                }
+                            </Button>
+                        </div>
                     </>
             }
         </>
