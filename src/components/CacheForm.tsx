@@ -79,7 +79,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
 
 
     return (
-        <Form className="m-5 w-25" onSubmit={(event) => {
+        <Form className="m-5" onSubmit={(event) => {
             event.preventDefault()
 
             const coordinates = {
