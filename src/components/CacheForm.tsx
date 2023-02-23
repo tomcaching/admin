@@ -1,7 +1,7 @@
 import React, {FC, useState} from "react";
 import {Form, Button, Row, Col, Card} from "react-bootstrap";
 import {GeocacheDto, GeocacheRequest, GeocacheType} from "@/types";
-import {createCache, fetchCaches, updateCache} from "@/client";
+import {createCache, fetchCaches, resetCache, updateCache} from "@/client";
 import {useAdminContext} from "@/context";
 import {useQuery} from "react-query";
 import ReactMarkdown from "react-markdown";
@@ -64,7 +64,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
     const [type, setType] = useState<GeocacheType>(initialCache.type);
     const [content, setContent] = useState<string>(initialCache.content);
     const [hint, setHint] = useState<string>(creatingNew ? "" : cache!.hint);
-   const isMystery = type == "mystery";
+    const isMystery = type == "mystery";
 
     const [realLat, setRealLat] = useState(initialCache.latitude.toString())
     const [realLng, setRealLng] = useState(initialCache.longitude.toString())
@@ -126,6 +126,11 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
             }
 
         }}>
+            {
+                (!creatingNew) &&
+                <div className={"btn btn-sm btn-outline-secondary"}
+                     onClick={() => resetCache(password!, cache!.id)}>resetovat kesku</div>
+            }
             <Form.Group className="mb-3">
                 <Form.Label>Nazev kesky</Form.Label>
                 <Form.Control type="text" value={title} onChange={(event) => setTitle(event.target.value)}/>
@@ -209,11 +214,11 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
             <Form.Group className="mb-3">
                 <Form.Label>Popis</Form.Label>
 
-                    <Form.Control as={"textarea"} value={content} onChange={event => setContent(event.target.value)}/>
-<Card>
+                <Form.Control as={"textarea"} value={content} onChange={event => setContent(event.target.value)}/>
+                <Card>
 
                     <ReactMarkdown skipHtml={true} className={"m-2"}>{content}</ReactMarkdown>
-</Card>
+                </Card>
 
             </Form.Group>
             <div>
