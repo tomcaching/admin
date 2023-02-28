@@ -190,6 +190,11 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
 
                     <Form.Control type="text" placeholder="" value={hint}
                                   onChange={(event) => setHint(event.target.value)}/>
+                    <Card>
+
+                        <ReactMarkdown skipHtml={true} className={"m-2"}>{hint}</ReactMarkdown>
+                    </Card>
+
                 </Form.Group>
             }
             {
@@ -199,6 +204,11 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
 
                     <Form.Control type="text" placeholder="" value={question}
                                   onChange={(event) => setQuestion(event.target.value)}/>
+                    <Card>
+
+                        <ReactMarkdown skipHtml={true} className={"m-2"}>{question??""}</ReactMarkdown>
+                    </Card>
+
                 </Form.Group>
             }
             {
