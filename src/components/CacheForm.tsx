@@ -54,9 +54,9 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                 longitude: cache!.coordinates.lng,
                 fakeLatitude: cache!.fakeCoordinates?.lat ?? defaultLatitude(),
                 fakeLongitude: cache!.fakeCoordinates?.lng ?? defaultLongitude(),
-                hint: "",
-                question: "",
-                solution: "",
+                hint: cache!.hint?,
+                question: cache!.question?,
+                solution: cache!.solution?,
             }
 
 
