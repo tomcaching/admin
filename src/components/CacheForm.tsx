@@ -188,7 +188,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                 <Form.Group className="mb-3">
                     <Form.Label>Napoveda</Form.Label>
 
-                    <Form.Control type="text" placeholder="" value={hint}
+                    <Form.Control as={"textarea"} placeholder="" value={hint}
                                   onChange={(event) => setHint(event.target.value)}/>
                     <Card>
 
@@ -202,7 +202,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                 <Form.Group className="mb-3">
                     <Form.Label>Otazka</Form.Label>
 
-                    <Form.Control type="text" placeholder="" value={question}
+                    <Form.Control as={"textarea"} placeholder="" value={question}
                                   onChange={(event) => setQuestion(event.target.value)}/>
                     <Card>
 
