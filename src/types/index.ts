@@ -21,6 +21,7 @@ type TraditionalGeocacheDto = GeocacheDtoBase & {
     fakeCoordinates: null;
     question: null;
     solution: null;
+    challenge: null;
 };
 
 type MysteryGeocacheDto = GeocacheDtoBase & {
@@ -29,6 +30,7 @@ type MysteryGeocacheDto = GeocacheDtoBase & {
     fakeCoordinates: GeocacheCoordinates;
     question: string;
     solution: string;
+    challenge: string;
 };
 
 export type GeocacheDto = TraditionalGeocacheDto | MysteryGeocacheDto;
@@ -37,11 +39,12 @@ export type GeocacheRequest = {
     title: string;
     content: string;
     type: GeocacheType;
-    hint:string;
+    hint: string;
     latitude: number;
     longitude: number;
     fakeLatitude?: number;
     fakeLongitude?: number;
     question?: string;
     solution?: string;
+    challenge?: string;
 };

@@ -1,11 +1,11 @@
-import {deleteCache, fetchCaches, resetCache} from "@/client";
-import {useAdminContext} from "@/context";
-import {type GeocacheDto} from "@/types";
-import {type FC, useState} from "react";
-import {useQuery} from "react-query";
+import { deleteCache, fetchCaches, resetCache } from "@/client";
+import { useAdminContext } from "@/context";
+import { type GeocacheDto } from "@/types";
+import { type FC, useState } from "react";
+import { useQuery } from "react-query";
 import Link from "next/link";
-import {Button} from "react-bootstrap";
-import {localStoragePassword} from "@/components/PasswordPrompt";
+import { Button } from "react-bootstrap";
+import { localStoragePassword } from "@/components/PasswordPrompt";
 
 const LoadingScreen: FC = () => {
     return (
@@ -14,19 +14,19 @@ const LoadingScreen: FC = () => {
 }
 
 const CachesEditor: FC = () => {
-    const {password} = useAdminContext();
+    const { password } = useAdminContext();
     const {
         data: caches,
         isLoading: cachesLoading
     } = useQuery<Array<GeocacheDto>>("caches", async () => await fetchCaches(password!));
-
+    console.log(caches)
     const [passwordInfo, setPasswordInfo] = useState(false)
 
     return (
         <>
             {
                 cachesLoading
-                    ? <LoadingScreen/>
+                    ? <LoadingScreen />
                     :
                     <>
                         <span className={"m-2"}>Pocet kesek: {caches!.length}</span>

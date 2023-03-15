@@ -1,10 +1,11 @@
-import React, {FC, useState} from "react";
-import {Form, Button, Row, Col, Card} from "react-bootstrap";
-import {GeocacheDto, GeocacheRequest, GeocacheType} from "@/types";
-import {createCache, fetchCaches, resetCache, updateCache} from "@/client";
-import {useAdminContext} from "@/context";
-import {useQuery} from "react-query";
+import React, { FC, useState } from "react";
+import { Form, Button, Row, Col, Card } from "react-bootstrap";
+import { GeocacheDto, GeocacheRequest, GeocacheType } from "@/types";
+import { createCache, fetchCaches, resetCache, updateCache } from "@/client";
+import { useAdminContext } from "@/context";
+import { useQuery } from "react-query";
 import ReactMarkdown from "react-markdown";
+import { checkPassword } from '../client/index';
 
 type CacheFormProps = {
     creatingNew: boolean;
@@ -23,10 +24,10 @@ const LoadingScreen: FC = () => {
     )
 }
 
-const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
+const LoadedCacheForm: FC<LoadedCacheFormProps> = ({ creatingNew, cache }) => {
 
 
-    const {password} = useAdminContext();
+    const { password } = useAdminContext();
 
     const defaultLatitude = () => 50.7741467 + (Math.random() / 100);
     const defaultLongitude = () => 15.0484722 + (Math.random() / 100);
@@ -45,6 +46,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                 hint: "",
                 question: "",
                 solution: "",
+                challenge: "",
             }
             : {
                 title: cache!.title,
@@ -54,9 +56,10 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                 longitude: cache!.coordinates.lng,
                 fakeLatitude: cache!.fakeCoordinates?.lat ?? defaultLatitude(),
                 fakeLongitude: cache!.fakeCoordinates?.lng ?? defaultLongitude(),
-                hint: cache!.hint?,
-                question: cache!.question?,
-                solution: cache!.solution?,
+                hint: cache!.hint ?? "",
+                question: cache!.question ?? "",
+                solution: cache!.solution ?? "",
+                challenge: cache!.challenge ?? "",
             }
 
 
@@ -75,6 +78,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
     const [question, setQuestion] = useState(initialCache.question);
 
     const [solution, setSolution] = useState(initialCache.solution)
+    const [challenge, setChallenge] = useState(initialCache.challenge)
     const toggleMysterka = () => setType(isMystery ? "traditional" : "mystery")
 
 
@@ -109,7 +113,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                     question,
                     solution
                 }
-                : {...base, type: "traditional"};
+                : { ...base, type: "traditional" };
 
 
             if (creatingNew) {
@@ -129,11 +133,11 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
             {
                 (!creatingNew) &&
                 <div className={"btn btn-sm btn-outline-secondary"}
-                     onClick={() => resetCache(password!, cache!.id)}>resetovat kesku</div>
+                    onClick={() => resetCache(password!, cache!.id)}>resetovat kesku</div>
             }
             <Form.Group className="mb-3">
                 <Form.Label>Nazev kesky</Form.Label>
-                <Form.Control type="text" value={title} onChange={(event) => setTitle(event.target.value)}/>
+                <Form.Control type="text" value={title} onChange={(event) => setTitle(event.target.value)} />
             </Form.Group>
             {/*
             <Form.Group className="mb-3">
@@ -142,7 +146,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
 
                  */}
             <Form.Group className="mb-3">
-                <Form.Check type="checkbox" label="Mysterka" onChange={() => toggleMysterka()} checked={isMystery}/>
+                <Form.Check type="checkbox" label="Mysterka" onChange={() => toggleMysterka()} checked={isMystery} />
             </Form.Group>
             {/*
                 isMystery &&
@@ -157,12 +161,12 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                     <Col>
                         <Form.Text className="text-muted">N</Form.Text>
                         <Form.Control type="text" placeholder="" value={realLat}
-                                      onChange={(event) => setRealLat(event.target.value)}/>
+                            onChange={(event) => setRealLat(event.target.value)} />
                     </Col>
                     <Col>
                         <Form.Text className="text-muted">E</Form.Text>
                         <Form.Control type="text" placeholder="" value={realLng}
-                                      onChange={(event) => setRealLng(event.target.value)}/>
+                            onChange={(event) => setRealLng(event.target.value)} />
                     </Col>
                 </Row>
             </Form.Group>
@@ -174,12 +178,12 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                         <Col>
                             <Form.Text className="text-muted">N</Form.Text>
                             <Form.Control type="text" placeholder="" value={fakeLat}
-                                          onChange={(event) => setFakeLat(event.target.value)}/>
+                                onChange={(event) => setFakeLat(event.target.value)} />
                         </Col>
                         <Col>
                             <Form.Text className="text-muted">E</Form.Text>
                             <Form.Control type="text" placeholder="" value={fakeLng}
-                                          onChange={(event) => setFakeLng(event.target.value)}/>
+                                onChange={(event) => setFakeLng(event.target.value)} />
                         </Col>
                     </Row>
                 </Form.Group>
@@ -189,7 +193,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                     <Form.Label>Napoveda</Form.Label>
 
                     <Form.Control as={"textarea"} placeholder="" value={hint}
-                                  onChange={(event) => setHint(event.target.value)}/>
+                        onChange={(event) => setHint(event.target.value)} />
                     <Card>
 
                         <ReactMarkdown skipHtml={true} className={"m-2"}>{hint}</ReactMarkdown>
@@ -203,11 +207,24 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                     <Form.Label>Otazka</Form.Label>
 
                     <Form.Control as={"textarea"} placeholder="" value={question}
-                                  onChange={(event) => setQuestion(event.target.value)}/>
+                        onChange={(event) => setQuestion(event.target.value)} />
                     <Card>
 
-                        <ReactMarkdown skipHtml={true} className={"m-2"}>{question??""}</ReactMarkdown>
+                        <ReactMarkdown skipHtml={true} className={"m-2"}>{question ?? ""}</ReactMarkdown>
                     </Card>
+
+                </Form.Group>
+            }
+            {
+                isMystery &&
+                <Form.Group className="mb-3">
+                    <Form.Label>Odkaz</Form.Label>
+
+                    <Form.Control placeholder="" value={challenge}
+                        onChange={(event) => setChallenge(event.target.value)} />
+
+
+                    <a target="_blank" className="btn btn-info" href={challenge}>test</a>
 
                 </Form.Group>
             }
@@ -217,14 +234,14 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
                     <Form.Label>Odpoved</Form.Label>
 
                     <Form.Control type="text" placeholder="" value={solution}
-                                  onChange={(event) => setSolution(event.target.value)}/>
+                        onChange={(event) => setSolution(event.target.value)} />
                 </Form.Group>
             }
 
             <Form.Group className="mb-3">
                 <Form.Label>Popis</Form.Label>
 
-                <Form.Control as={"textarea"} value={content} onChange={event => setContent(event.target.value)}/>
+                <Form.Control as={"textarea"} value={content} onChange={event => setContent(event.target.value)} />
                 <Card>
 
                     <ReactMarkdown skipHtml={true} className={"m-2"}>{content}</ReactMarkdown>
@@ -241,9 +258,9 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({creatingNew, cache}) => {
 }
 
 
-export const CacheForm: FC<CacheFormProps> = ({creatingNew, cacheId}) => {
+export const CacheForm: FC<CacheFormProps> = ({ creatingNew, cacheId }) => {
 
-    const {password} = useAdminContext();
+    const { password } = useAdminContext();
 
     const {
         data: caches,
@@ -254,10 +271,10 @@ export const CacheForm: FC<CacheFormProps> = ({creatingNew, cacheId}) => {
     return (<>
         {
             cachesLoading
-                ? <LoadingScreen/>
+                ? <LoadingScreen />
                 : creatingNew
-                    ? <LoadedCacheForm creatingNew={true}/>
-                    : <LoadedCacheForm creatingNew={false} cache={caches!.find(cache => cache.id == cacheId)}/>
+                    ? <LoadedCacheForm creatingNew={true} />
+                    : <LoadedCacheForm creatingNew={false} cache={caches!.find(cache => cache.id == cacheId)} />
         }
 
     </>)
