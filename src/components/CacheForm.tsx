@@ -111,7 +111,8 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({ creatingNew, cache }) => {
                     fakeLatitude: fakeCoordinates.lat,
                     fakeLongitude: fakeCoordinates.lng,
                     question,
-                    solution
+                    solution,
+                    challenge,
                 }
                 : { ...base, type: "traditional" };
 
