@@ -86,6 +86,8 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({ creatingNew, cache }) => {
         <Form className="m-5" onSubmit={(event) => {
             event.preventDefault()
 
+            const requestChallenge = challenge!.length > 0 ? challenge : undefined;
+
             const coordinates = {
                 lat: Number(realLat),
                 lng: Number(realLng),
@@ -112,7 +114,7 @@ const LoadedCacheForm: FC<LoadedCacheFormProps> = ({ creatingNew, cache }) => {
                     fakeLongitude: fakeCoordinates.lng,
                     question,
                     solution,
-                    challenge,
+                    challenge: requestChallenge,
                 }
                 : { ...base, type: "traditional" };
 
